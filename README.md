@@ -68,13 +68,21 @@ Two engines answer this vocabulary: the desktop app (HTTP `POST /rpc`) and, if y
 
 ## Installing the plugin
 
-The plugin is a normal profile dependency of DSH, and this repository installs directly from GitHub:
+The plugin is a normal profile dependency of DSH, and this repository installs directly from GitHub — there is no npm package:
 
 ```sh
+# install (or reinstall at the latest commit)
 dsh plugin --profile web add github:iimaguest/dsh-browser-annotate
+
+# update to the newest pushed commit
+dsh plugin --profile web update dsh-browser-annotate
+
+# remove — dependency and bundle layer together; the profile's own
+# cordis.patch.yml is never touched
+dsh plugin --profile web remove dsh-browser-annotate
 ```
 
-Then restart DSH. `dsh plugin --profile web remove dsh-browser-annotate` undoes it, dependency and bundle layer together; the profile's own `cordis.patch.yml` is never touched.
+Each command takes effect the next time DSH starts.
 
 What that command installs: a package whose `package.json` declares itself a DSH plugin — `dsh.bundle.patch` points at `cordis.patch.yml` (one insert row carrying the host half: service, HTTP routes, tools) and `dsh.client.inject` mounts the browser sidebar into the web client. `host/` is the DSH-side half, `client/` the web-client half, `extension/` an optional Chrome MV3 extension that can act as a second engine.
 
