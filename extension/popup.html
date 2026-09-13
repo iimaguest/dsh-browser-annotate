@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Browser Annotate</title>
+    <style>
+      :root {
+        color-scheme: dark light;
+      }
+      body {
+        margin: 0;
+        width: 288px;
+        padding: 12px;
+        font: 12px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        background: #16181d;
+        color: #e8e8ea;
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 4px;
+        background: #ff9f0a;
+        flex: 0 0 auto;
+      }
+      .dot.on {
+        background: #34c759;
+      }
+      .grow {
+        flex: 1;
+        min-width: 0;
+      }
+      .muted {
+        opacity: 0.66;
+        word-break: break-all;
+      }
+      .tab {
+        margin: 8px 0;
+        padding: 7px 8px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 7px;
+        background: rgba(255, 255, 255, 0.03);
+      }
+      .buttons {
+        display: flex;
+        gap: 6px;
+        margin-top: 8px;
+        flex-wrap: wrap;
+      }
+      button {
+        appearance: none;
+        font: inherit;
+        cursor: pointer;
+        border-radius: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        background: transparent;
+        color: inherit;
+        padding: 5px 9px;
+      }
+      button.primary {
+        background: #4d6bfe;
+        border-color: transparent;
+        color: #fff;
+      }
+      button:disabled {
+        opacity: 0.45;
+        cursor: default;
+      }
+      label {
+        display: block;
+        margin-top: 10px;
+        opacity: 0.72;
+      }
+      input {
+        width: 100%;
+        box-sizing: border-box;
+        margin-top: 3px;
+        padding: 5px 7px;
+        font: inherit;
+        color: inherit;
+        background: #0f1115;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 6px;
+      }
+      .note {
+        margin-top: 10px;
+        opacity: 0.6;
+        font-size: 11px;
+      }
+      .warn {
+        margin-top: 8px;
+        padding: 6px 8px;
+        border-radius: 6px;
+        background: rgba(255, 159, 10, 0.14);
+        border: 1px solid rgba(255, 159, 10, 0.35);
+        font-size: 11px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Browser Annotate</h1>
+    <div class="row">
+      <span class="dot" id="dot"></span>
+      <span class="grow" id="status">Checking the bridge…</span>
+    </div>
+    <div class="tab" id="tab">No active tab.</div>
+    <div class="buttons">
+      <button class="primary" id="quick">Quick annotate</button>
+      <button id="inspect">Inspect</button>
+      <button id="stop" disabled>Stop</button>
+    </div>
+    <label for="host">DeepSeek Harness address</label>
+    <input id="host" spellcheck="false" placeholder="http://127.0.0.1:3080" />
+    <div class="note" id="note">Right-click any element while annotation mode is on, type what should change, and press Enter. The agent reads it from the DSH sidebar or with its own browser tools.</div>
+    <div class="warn" id="warn" style="display: none"></div>
+    <script src="popup.js"></script>
+  </body>
+</html>

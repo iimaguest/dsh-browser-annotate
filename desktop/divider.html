@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'self'" />
+    <title>Divider</title>
+    <style>
+      /* The divider between the two panes. It is its own view because it has to sit between
+         two native views, and a line drawn in a page would be composited under them. */
+      html, body { margin: 0; height: 100%; overflow: hidden; }
+      body {
+        background: #202124;
+        cursor: col-resize;
+        display: grid;
+        place-items: center;
+      }
+      body:hover { background: #2b2c2f; }
+      body.dragging { background: #4d6bfe; }
+      #grip {
+        width: 2px;
+        height: 28px;
+        border-radius: 1px;
+        background: rgba(255, 255, 255, 0.22);
+      }
+      body:hover #grip, body.dragging #grip { background: rgba(255, 255, 255, 0.5); }
+    </style>
+  </head>
+  <body>
+    <div id="grip"></div>
+    <script src="divider.js"></script>
+  </body>
+</html>

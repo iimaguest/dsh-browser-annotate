@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'" />
+    <title>New Tab</title>
+    <style>
+      /* The page a new tab opens on: a real page in a real tab, so it can be navigated away
+         from and back to like any other. */
+      html, body { margin: 0; height: 100%; }
+      body {
+        display: grid;
+        place-items: center;
+        background: #202124;
+        color: #e8eaed;
+        font: 14px/1.5 -apple-system, system-ui, sans-serif;
+      }
+      main { width: min(520px, 78vw); }
+      h1 { font-size: 21px; font-weight: 500; margin: 0 0 16px; letter-spacing: -0.2px; }
+      form { display: flex; }
+      input {
+        flex: 1 1 auto;
+        height: 42px;
+        padding: 0 16px;
+        border: 1px solid transparent;
+        border-radius: 21px;
+        background: #2b2c2f;
+        color: inherit;
+        font: inherit;
+        outline: none;
+      }
+      input:focus { background: #202124; border-color: #8ab4f8; }
+      p { margin: 16px 0 0; font-size: 12px; opacity: 0.5; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>New Tab</h1>
+      <form id="go">
+        <input id="q" placeholder="Search or type a URL" autocomplete="off" spellcheck="false" autofocus />
+      </form>
+      <p>Type an address, or paste the URL that <code>dsh web</code> printed.</p>
+    </main>
+    <script>
+      document.getElementById('go').addEventListener('submit', event => {
+        event.preventDefault()
+        const typed = document.getElementById('q').value.trim()
+        if (typed === '') return
+        location.href = /^[a-z][a-z0-9+.-]*:\/\//i.test(typed) ? typed : `https://${typed}`
+      })
+    </script>
+  </body>
+</html>

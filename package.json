@@ -1,0 +1,94 @@
+{
+  "name": "dsh-browser-annotate",
+  "version": "0.1.0",
+  "description": "Codex-style quick and inspect annotation for the DeepSeek Harness agent, plus native browser tools and full Chrome DevTools Protocol access, driven through a real Chrome tab the human owns.",
+  "license": "MIT",
+  "author": "iimaguest",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iimaguest/dsh-browser-annotate.git"
+  },
+  "bugs": {
+    "url": "https://github.com/iimaguest/dsh-browser-annotate/issues"
+  },
+  "homepage": "https://github.com/iimaguest/dsh-browser-annotate#readme",
+  "type": "module",
+  "main": "host/index.js",
+  "exports": {
+    ".": {
+      "default": "./host/index.js"
+    },
+    "./client": {
+      "default": "./client/index.js"
+    },
+    "./extension": {
+      "default": "./extension/manifest.json"
+    },
+    "./src/*": "./src/*",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "host/**/*.js",
+    "client/**/*.js",
+    "extension/**",
+    "README.md",
+    "scripts/**/*.mjs"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-sidebar-right"
+      ],
+      "platform": "web"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.2",
+    "@deepseek-ai/dsh-agent": ">=0.1.2-alpha.1 <0.2.0-0",
+    "@deepseek-ai/dsh-attachment": ">=0.1.2-alpha.1 <0.2.0-0",
+    "@deepseek-ai/dsh-host-webserver": ">=0.1.2-alpha.1 <0.2.0-0",
+    "@deepseek-ai/dsh-llm": ">=0.1.2-alpha.1 <0.2.0-0",
+    "@deepseek-ai/dsh-tools": ">=0.1.2-alpha.1 <0.2.0-0"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/cordis": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-agent": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-attachment": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-host-webserver": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-llm": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-tools": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "browser",
+    "annotation",
+    "cdp",
+    "chrome-devtools-protocol",
+    "deepseek-harness"
+  ],
+  "dependencies": {
+    "playwright-core": "^1.63.0"
+  },
+  "scripts": {
+    "link-peers": "node scripts/link-peers.mjs"
+  }
+}

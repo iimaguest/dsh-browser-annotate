@@ -1,0 +1,39 @@
+{
+  "name": "dsh-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Desktop shell that runs the DSH Web GUI in a native window and puts real Chromium in the right-sidebar pane.",
+  "author": "iimaguest",
+  "main": "main.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --mac dmg"
+  },
+  "devDependencies": {
+    "electron": "^44.3.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.iimaguest.dsh",
+    "productName": "DSH",
+    "asar": true,
+    "files": [
+      "**/*",
+      "!dist"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "target": [
+        { "target": "dmg", "arch": ["arm64"] }
+      ],
+      "identity": null
+    },
+    "dmg": {
+      "title": "DSH"
+    }
+  }
+}

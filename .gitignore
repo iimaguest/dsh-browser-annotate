@@ -1,0 +1,14 @@
+# Dependencies and build output, at any depth.
+node_modules/
+dist/
+
+# Local runs: proof artifacts, logs, finder noise.
+tmp/
+*.log
+.DS_Store
+
+# The tokenised URL handed to ./dev.sh. It carries a session token, so it is never committed.
+.dev-url
+
+# A local DSH Harness home, when this repo doubles as the playground for trying the plugin.
+.dsh*/

@@ -1,0 +1,14 @@
+# The dsh-browser-annotate bundle patch: one insert over the profile root.
+#
+# A single row carries the whole host surface — the `browserBridge` service, the
+# `/browser-annotate` HTTP and upgrade routes, and the model-facing toolset. The
+# browser half is declared separately in package.json's `dsh.client`, so nothing
+# here needs a second row.
+#
+# This patch is its own bundle layer, which is what makes the install reversible:
+# `dsh plugin --profile web remove dsh-browser-annotate` drops the dependency and
+# this layer together. The profile's own cordis.patch.yml is never touched.
+
+- insert:
+    - id: browser-annotate
+      name: 'dsh-browser-annotate'

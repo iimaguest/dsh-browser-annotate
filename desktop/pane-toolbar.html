@@ -1,0 +1,218 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; img-src data: https: http:; style-src 'unsafe-inline'; script-src 'self'"
+    />
+    <title>Pane</title>
+    <style>
+      /* One pane's strip and address row, sized by the shell to that pane's own width. */
+      html, body { margin: 0; height: 100%; overflow: hidden; }
+      body {
+        display: flex;
+        flex-direction: column;
+        font: 12px/1.2 -apple-system, system-ui, sans-serif;
+        background: #202124;
+        color: #e8eaed;
+        user-select: none;
+      }
+
+      /* ── tab strip, only when a pane holds more than one tab ─────────── */
+      #strip {
+        display: flex;
+        align-items: flex-end;
+        gap: 2px;
+        height: 36px;
+        padding: 5px 6px 0;
+        box-sizing: border-box;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+      }
+      #strip::-webkit-scrollbar { display: none; }
+      body.single #strip { display: none; }
+      /* A pane with no strip uses the space for the page instead of leaving a gap. */
+      body.single #bar { height: 74px; }
+      .tab {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex: 0 1 200px;
+        min-width: 44px;
+        height: 31px;
+        padding: 0 8px;
+        border-radius: 8px 8px 0 0;
+        white-space: nowrap;
+        overflow: hidden;
+        cursor: default;
+      }
+      .tab:hover { background: #2b2c2f; }
+      .tab.active { background: #35363a; }
+      .favicon { flex: 0 0 auto; width: 14px; height: 14px; object-fit: contain; }
+      .glyph { flex: 0 0 auto; width: 14px; height: 14px; display: grid; place-items: center; opacity: 0.65; font-size: 11px; }
+      .label { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; }
+      .close {
+        flex: 0 0 auto;
+        width: 18px;
+        height: 18px;
+        border: none;
+        border-radius: 4px;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        line-height: 1;
+        cursor: pointer;
+        opacity: 0;
+      }
+      .tab:hover .close, .tab.active .close { opacity: 0.72; }
+      .close:hover { background: rgba(255, 255, 255, 0.16); opacity: 1; }
+      #newtab {
+        flex: 0 0 auto;
+        width: 26px;
+        height: 26px;
+        margin-bottom: 3px;
+        border: none;
+        border-radius: 6px;
+        background: transparent;
+        color: inherit;
+        font-size: 15px;
+        line-height: 1;
+        cursor: pointer;
+      }
+      #newtab:hover { background: #2b2c2f; }
+
+      /* ── address row ─────────────────────────────────────────────────── */
+      #bar {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        height: 38px;
+        padding: 0 8px;
+        box-sizing: border-box;
+      }
+      .icon {
+        flex: 0 0 auto;
+        width: 28px;
+        height: 28px;
+        border: none;
+        border-radius: 50%;
+        background: transparent;
+        color: inherit;
+        font-size: 14px;
+        line-height: 1;
+        cursor: pointer;
+      }
+      .icon:hover:not(:disabled) { background: rgba(255, 255, 255, 0.1); }
+      .icon:disabled { opacity: 0.32; cursor: default; }
+      #omnibox {
+        flex: 1 1 auto;
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        height: 30px;
+        padding: 0 10px;
+        border-radius: 15px;
+        background: #2b2c2f;
+        border: 1px solid transparent;
+      }
+      #omnibox:focus-within { background: #202124; border-color: #8ab4f8; }
+      #security { flex: 0 0 auto; font-size: 12px; opacity: 0.85; }
+      #security.warn { color: #fdd663; }
+      #security.bad { color: #f28b82; }
+      #address {
+        flex: 1 1 auto;
+        min-width: 0;
+        border: none;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        outline: none;
+      }
+      #zoom { flex: 0 0 auto; font-size: 11px; opacity: 0.7; }
+      /* The annotation controls sit with the other icon buttons; the armed one says so. */
+      button.icon.armed { color: #8ab4f8; background: rgba(138, 180, 248, 0.16); }
+      #queue { position: relative; }
+      #count {
+        position: absolute; top: 0; right: 0; min-width: 15px; height: 15px; padding: 0 3px;
+        border-radius: 8px; background: #8ab4f8; color: #202124; font-size: 10px;
+        line-height: 15px; font-weight: 600; display: none;
+      }
+      #count[data-n]:not([data-n="0"]) { display: block; }
+
+      /* The queue. It hangs over the page because the page is a native view that cannot be
+         pushed down by a document, so a panel that took layout space would cover content
+         instead of sitting above it. */
+      #queue-panel {
+        position: absolute; right: 10px; top: 100%; z-index: 40; width: 340px; max-height: 60vh;
+        overflow: hidden; display: flex; flex-direction: column;
+        background: #292a2d; border: 1px solid #3c4043; border-radius: 10px;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5); color: #e8eaed; font-size: 12px;
+      }
+      #queue-head {
+        display: flex; align-items: center; gap: 10px; padding: 9px 11px;
+        border-bottom: 1px solid #3c4043; font-weight: 600;
+      }
+      #queue-title { flex: 1; }
+      button.link {
+        background: none; border: 0; color: #8ab4f8; font: inherit; cursor: pointer; padding: 0;
+      }
+      button.link:hover { text-decoration: underline; }
+      #queue-list { overflow-y: auto; }
+      .queue-item { display: flex; gap: 9px; padding: 9px 11px; border-bottom: 1px solid #35363a; }
+      .queue-item:last-child { border-bottom: 0; }
+      .queue-item img { width: 62px; height: 46px; object-fit: contain; border-radius: 4px; background: #1f2023; flex: none; }
+      .queue-item .body { min-width: 0; flex: 1; }
+      .queue-item .comment { margin-bottom: 3px; }
+      .queue-item .selector {
+        color: #9aa0a6; font-family: ui-monospace, monospace; font-size: 11px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      .queue-item .drop { background: none; border: 0; color: #9aa0a6; cursor: pointer; padding: 0 2px; }
+      .queue-empty { padding: 14px 11px; color: #9aa0a6; }
+
+      #progress {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 2px;
+        width: 0;
+        background: #8ab4f8;
+        transition: width 120ms linear;
+      }
+      #progress.done { opacity: 0; }
+    </style>
+  </head>
+  <body class="single">
+    <div id="strip"></div>
+    <div id="bar">
+      <button class="icon" id="back" title="Back">‹</button>
+      <button class="icon" id="forward" title="Forward">›</button>
+      <button class="icon" id="reload" title="Reload">⟳</button>
+      <div id="omnibox">
+        <span id="security" title=""></span>
+        <input id="address" spellcheck="false" autocomplete="off" placeholder="Search or type a URL" />
+        <span id="zoom"></span>
+      </div>
+      <button class="icon" id="quick" title="Annotate: click an element and say what is wrong with it">◎</button>
+      <button class="icon" id="inspect" title="Inspect: walk the DOM, then annotate what you found">⌖</button>
+      <button class="icon" id="queue" title="Annotations">✎<span id="count"></span></button>
+      <button class="icon" id="menu" title="More">⋮</button>
+    </div>
+    <div id="progress"></div>
+    <!-- The annotations waiting to go into the conversation. A panel rather than a row of
+         chips, because each one carries a screenshot and the human re-reads them before
+         sending. -->
+    <div id="queue-panel" hidden>
+      <div id="queue-head">
+        <span id="queue-title">Annotations</span>
+        <button class="link" id="queue-send">Add to input</button>
+        <button class="link" id="queue-clear">Clear</button>
+      </div>
+      <div id="queue-list"></div>
+    </div>
+    <script src="pane-toolbar.js"></script>
+  </body>
+</html>
