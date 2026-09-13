@@ -31,8 +31,9 @@
     "host/**/*.js",
     "client/**/*.js",
     "extension/**",
-    "README.md",
-    "scripts/**/*.mjs"
+    "scripts/**/*.mjs",
+    "cordis.patch.yml",
+    "README.md"
   ],
   "dsh": {
     "bundle": {
