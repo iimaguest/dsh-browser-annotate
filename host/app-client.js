@@ -111,7 +111,7 @@ export class DesktopApp {
     const health = await this.locate()
     if (health === null) {
       throw new Error(
-        'the desktop browser app is not running, so there is no browser to drive. Start it (npm start in dsh-desktop), or attach the Chrome extension instead.',
+        'the desktop browser app is not running, so there is no browser to drive. Start it (npm start in the desktop/ directory of the dsh-browser-annotate checkout), or attach the Chrome extension instead.',
       )
     }
     const timeoutMs = options.timeoutMs ?? (IMAGE_METHODS.has(method) ? IMAGE_TIMEOUT_MS : DEFAULT_TIMEOUT_MS)
