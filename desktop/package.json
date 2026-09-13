@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "description": "Desktop shell that runs the DSH Web GUI in a native window and puts real Chromium in the right-sidebar pane.",
-  "author": "iimaguest",
   "main": "main.js",
   "type": "commonjs",
   "scripts": {
@@ -20,13 +19,15 @@
     "asar": true,
     "files": [
       "**/*",
-      "!dist"
+      "!dist",
+      "!build"
     ],
     "directories": {
       "output": "dist"
     },
     "mac": {
       "category": "public.app-category.developer-tools",
+      "icon": "build/icon.icns",
       "target": [
         { "target": "dmg", "arch": ["arm64"] }
       ],
